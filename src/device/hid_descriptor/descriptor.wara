@@ -1,0 +1,42 @@
+# ============================================================
+# Custom Button + RGB LED Device
+# ============================================================
+
+[[settings]]
+generateCpp = true
+
+[[usagePage]]
+id = 0xFF22 # Vendor defined range (acceptable for hobby projects) is 0xFF00–0xFFFF
+name = 'LitButton'
+
+    [[usagePage.usage]]
+    id = 0x0001
+    name = 'LitButton'
+    types = ['CA'] # Collection Application. Top-level device type, required for applicationCollection.
+
+    [[usagePage.usage]]
+    id = 0x0002
+    name = 'Button'
+    types = ['MC'] # Momentary Control. A button that's active while held, inactive when released.
+
+    [[usagePage.usage]]
+    id = 0x0003
+    name = 'LED'
+    types = ['OOC'] # On/Off Control. A toggle — the value persists between reports.
+
+[[applicationCollection]]
+usage = ['LitButton', 'LitButton']
+
+    [[applicationCollection.inputReport]]
+
+        [[applicationCollection.inputReport.variableItem]]
+        usage = ['LitButton', 'Button']
+        logicalValueRange = [0, 1]
+
+    [[applicationCollection.outputReport]]
+
+        #TODO: add Red/Green/Blue/brightness output capability for RGB LED
+
+        [[applicationCollection.outputReport.variableItem]]
+        usage = ['LitButton', 'LED']
+        logicalValueRange = [0, 1]
