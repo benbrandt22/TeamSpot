@@ -34,6 +34,8 @@ public sealed class OrchestratorService : BackgroundService
     {
         try
         {
+            await DisplayTeamsStateAsync(TeamsSimplifiedState.Offline, ct);
+
             await Task.WhenAll(
                 HandleUsbInputReports(ct),
                 HandleTeamsStateUpdates(ct)
@@ -43,9 +45,11 @@ public sealed class OrchestratorService : BackgroundService
         {
             // When the stopping token is canceled, for example, a call made from services.msc,
             // we shouldn't exit with a non-zero exit code. In other words, this is expected...
+            await DisplayTeamsStateAsync(TeamsSimplifiedState.Offline, ct);
         }
         catch (Exception ex)
         {
+            await DisplayTeamsStateAsync(TeamsSimplifiedState.Offline, ct);
             _logger.LogError(ex, "{Message}", ex.Message);
 
             // Terminates this process and returns an exit code to the operating system.
