@@ -21,8 +21,23 @@ name = 'LitButton'
 
     [[usagePage.usage]]
     id = 0x0003
-    name = 'LED'
-    types = ['OOC'] # On/Off Control. A toggle — the value persists between reports.
+    name = 'RedChannel'
+    types = ['DV'] # Dynamic Value. A variable numeric field that the host writes.
+
+    [[usagePage.usage]]
+    id = 0x0004
+    name = 'GreenChannel'
+    types = ['DV'] # Dynamic Value. A variable numeric field that the host writes.
+
+    [[usagePage.usage]]
+    id = 0x0005
+    name = 'BlueChannel'
+    types = ['DV'] # Dynamic Value. A variable numeric field that the host writes.
+
+    [[usagePage.usage]]
+    id = 0x0006
+    name = 'Brightness'
+    types = ['DV'] # Dynamic Value. A variable numeric field that the host writes.
 
 [[applicationCollection]]
 usage = ['LitButton', 'LitButton']
@@ -35,8 +50,18 @@ usage = ['LitButton', 'LitButton']
 
     [[applicationCollection.outputReport]]
 
-        #TODO: add Red/Green/Blue/brightness output capability for RGB LED
+        [[applicationCollection.outputReport.variableItem]]
+        usage = ['LitButton', 'RedChannel']
+        logicalValueRange = [0, 255]
 
         [[applicationCollection.outputReport.variableItem]]
-        usage = ['LitButton', 'LED']
-        logicalValueRange = [0, 1]
+        usage = ['LitButton', 'GreenChannel']
+        logicalValueRange = [0, 255]
+
+        [[applicationCollection.outputReport.variableItem]]
+        usage = ['LitButton', 'BlueChannel']
+        logicalValueRange = [0, 255]
+
+        [[applicationCollection.outputReport.variableItem]]
+        usage = ['LitButton', 'Brightness']
+        logicalValueRange = [0, 100]
