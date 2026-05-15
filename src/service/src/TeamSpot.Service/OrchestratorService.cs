@@ -2,6 +2,7 @@ using HidSharp.Reports;
 using Microsoft.VisualBasic;
 using System.Diagnostics;
 using System.Drawing;
+using TeamSpot.Service.Device;
 using TeamSpot.Service.Hid;
 using TeamSpot.Service.Teams;
 
@@ -133,25 +134,16 @@ public sealed class OrchestratorService : BackgroundService
 
     private async Task DisplayTeamsStateAsync(TeamsSimplifiedState teamsSimplifiedState, CancellationToken ct)
     {
-        (decimal Brightness, Color Color) ledState = teamsSimplifiedState switch
+        SetLedOutput ledState = teamsSimplifiedState switch
         {
-            TeamsSimplifiedState.Offline => (0.0m, Color.Black),
-            TeamsSimplifiedState.Connecting => (0.1m, Color.Blue),
-            TeamsSimplifiedState.Connected => (1.0m, Color.Blue),
-            TeamsSimplifiedState.MeetingMutedMic => (1.0m, Color.Red),
-            TeamsSimplifiedState.MeetingLiveMic => (1.0m, Color.Green),
-            _ => (0.0m, Color.Black)
+            TeamsSimplifiedState.Offline => new(Color.Black),
+            TeamsSimplifiedState.Connecting => new(Color.Blue, 20),
+            TeamsSimplifiedState.Connected => new(Color.Blue, 50),
+            TeamsSimplifiedState.MeetingMutedMic => new(Color.Red),
+            TeamsSimplifiedState.MeetingLiveMic => new(Color.Green),
+            _ => new(Color.Black)
         };
 
-        // TODO: handle actual brightness/RGB once the device supports it. For now just send the true/false signal
-
-        if(ledState.Color == Color.Green)
-        {
-            await _hidMessageBus.Outbound.Writer.WriteAsync([0x01, 0x01]);
-        }
-        else
-        {
-            await _hidMessageBus.Outbound.Writer.WriteAsync([0x01, 0x00]);
-        }
+        await _hidMessageBus.Outbound.Writer.WriteAsync(ledState.ToUsbOutputReport());
     }
 }
