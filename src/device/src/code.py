@@ -1,9 +1,9 @@
-# type: ignore
 import time
 import board
 import digitalio
 import neopixel
 import usb_hid
+import math
 
 # RP2040-Zero board members: (dir(board))
 # ['__class__', '__name__', 'A0', 'A1', 'A2', 'A3', 'GP0', 'GP1', 'GP10', 'GP11', 'GP12', 'GP13', 'GP14', 'GP15', 'GP16', 'GP17', 'GP18', 'GP19', 'GP2', 'GP20', 'GP21', 'GP22', 'GP23', 'GP24', 'GP25', 'GP26', 'GP26_A0', 'GP27', 'GP27_A1', 'GP28', 'GP28_A2', 'GP29', 'GP29_A3', 'GP3', 'GP4', 'GP5', 'GP6', 'GP7', 'GP8', 'GP9', 'NEOPIXEL', 'RX', 'TX', 'UART', '__dict__', 'board_id']
@@ -30,22 +30,49 @@ last_pressed = False
 
 # ----- NEOPIXEL SETUP -----
 
-pixel = neopixel.NeoPixel(board.NEOPIXEL, 1, brightness=0.2)
+num_pixels = 4
+pixel_pin = board.GP3
+pixels = neopixel.NeoPixel(pixel_pin, 4, brightness=0.2, auto_write=False)
 
 def show_color(r, g, b, brightness_percent):
-    pixel.brightness = brightness_percent / 100.0
-    pixel[0] = (r, g, b)
+    for i in range(num_pixels):
+        pixels.brightness = brightness_percent / 100.0
+        pixels[i] = (r, g, b)
+    pixels.show()
 
 # ----- STARTUP ANIMATION -----
 
-fadeTimeSec = 0.2
-for i in range(0, 101, 2): # fade in
-    show_color(0, 255, 0, i)
-    time.sleep(fadeTimeSec/50)
-time.sleep(1) #hold
-for i in range(100, -1, -2): # fade out
-    show_color(0, 255, 0, i)
-    time.sleep(fadeTimeSec/50)
+def spin(color=(0, 255, 0), laps=3, speed=num_pixels, fade_laps=1): # speed = pixels/sec
+    r, g, b = color
+    total_distance = num_pixels * laps
+    fade_start = total_distance - (num_pixels * fade_laps)
+    pos = 0.0
+
+    while pos < total_distance:
+        # how far into the fade zone are we? 0.0 -> 1.0
+        if pos >= fade_start:
+            t = 1.0 - (pos - fade_start) / (num_pixels * fade_laps)
+        else:
+            t = 1.0
+
+        lo = int(pos) % num_pixels
+        hi = (lo + 1) % num_pixels
+        frac = pos - math.floor(pos)
+
+        pixels.fill((0, 0, 0))
+        pixels[lo] = (round(r * (1.0 - frac) * t), round(g * (1.0 - frac) * t), round(b * (1.0 - frac) * t))
+        pixels[hi] = (round(r * frac * t),          round(g * frac * t),          round(b * frac * t))
+        pixels.show()
+
+        UPDATE_RATE = 0.02 # seconds per frame
+        pos += speed * UPDATE_RATE
+        time.sleep(UPDATE_RATE)
+
+    pixels.fill((0, 0, 0))
+    pixels.show()
+
+
+spin((0,0,255), 2)
 
 # ----- MAIN LOOP -----
 
@@ -67,9 +94,6 @@ while True:
 
     # --- Receive output report from host ---
     output = device.get_last_received_report(report_id=1)
-    if output is not None:
-        print(len(output));
-        print(output);
     if output is not None and len(output) == 4:
         r, g, b, brightness_percent = output[0], output[1], output[2], output[3]
         show_color(r, g, b, brightness_percent)
