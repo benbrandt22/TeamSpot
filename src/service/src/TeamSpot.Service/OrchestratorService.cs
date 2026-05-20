@@ -19,6 +19,8 @@ public sealed class OrchestratorService : BackgroundService
     private readonly ITeamsCommandWriter _commandWriter;
     private Stopwatch _buttonPressedTimer = new();
     private TimeSpan _longPressThreshold = TimeSpan.FromMilliseconds(1000);
+    private TimeSpan _heartbeatInterval = TimeSpan.FromSeconds(3);
+    private TeamsSimplifiedState _currentState;
 
     public OrchestratorService(HidMessageBus hidMessageBus,
         ILogger<OrchestratorService> logger,
@@ -28,6 +30,7 @@ public sealed class OrchestratorService : BackgroundService
         _logger = logger;
         _stateReader = stateReader;
         _commandWriter = commandWriter;
+        _currentState = TeamsSimplifiedState.Offline;
     }
 
     protected override async Task ExecuteAsync(CancellationToken ct)
@@ -38,7 +41,8 @@ public sealed class OrchestratorService : BackgroundService
 
             await Task.WhenAll(
                 HandleUsbInputReports(ct),
-                HandleTeamsStateUpdates(ct)
+                HandleTeamsStateUpdates(ct),
+                HeartbeatDisplayCurrentState(ct)
             );
         }
         catch (OperationCanceledException)
@@ -97,8 +101,22 @@ public sealed class OrchestratorService : BackgroundService
             await foreach (var state in _stateReader.StateReader.ReadAllAsync(ct))
             {
                 // state change received from Teams
-                await DisplayTeamsStateAsync(state.ToSimplifiedState(), ct);
+                _currentState = state.ToSimplifiedState();
+                await DisplayTeamsStateAsync(_currentState, ct);
             }
+        }
+    }
+
+    /// <summary>
+    /// Periodically sends the current state (color) to the device, to ensure it doesn't get out of sync
+    /// especially after USB disconnects/reconnects, which may cause the device to lose its state.
+    /// </summary>
+    private async Task HeartbeatDisplayCurrentState(CancellationToken ct)
+    {
+        while (!ct.IsCancellationRequested)
+        {
+            await Task.Delay(_heartbeatInterval, ct);
+            await DisplayTeamsStateAsync(_currentState, ct);
         }
     }
 
@@ -141,8 +159,8 @@ public sealed class OrchestratorService : BackgroundService
         SetLedOutput ledState = teamsSimplifiedState switch
         {
             TeamsSimplifiedState.Offline => new(Color.Black),
-            TeamsSimplifiedState.Connecting => new(Color.Blue, 20),
-            TeamsSimplifiedState.Connected => new(Color.Blue, 50),
+            TeamsSimplifiedState.Connecting => new(Color.Blue, 10),
+            TeamsSimplifiedState.Connected => new(Color.Blue, 20),
             TeamsSimplifiedState.MeetingMutedMic => new(Color.Red),
             TeamsSimplifiedState.MeetingLiveMic => new(Color.Green),
             _ => new(Color.Black)
