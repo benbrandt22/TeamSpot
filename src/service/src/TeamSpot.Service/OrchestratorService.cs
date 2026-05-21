@@ -1,5 +1,3 @@
-using HidSharp.Reports;
-using Microsoft.VisualBasic;
 using System.Diagnostics;
 using System.Drawing;
 using TeamSpot.Service.Device;
@@ -79,13 +77,18 @@ public sealed class OrchestratorService : BackgroundService
             {
                 _logger.LogDebug("Processing input report: {Hex}", Convert.ToHexString(report));
 
-                switch (report)
+                var inputEvent = UsbInputEvent.FromReport(report);
+                
+                switch (inputEvent)
                 {
-                    case [0x01, 0x01]:
+                    case ButtonStateChange { State: ButtonState.Down }:
                         await ButtonDown();
                         break;
-                    case [0x01, 0x00]:
+                    case ButtonStateChange { State: ButtonState.Up }:
                         await ButtonUp();
+                        break;
+                    default:
+                        _logger.LogWarning("Received unknown input event {type}", inputEvent.GetType().Name);
                         break;
                 }
 
