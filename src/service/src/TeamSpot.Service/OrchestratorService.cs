@@ -77,8 +77,8 @@ public sealed class OrchestratorService : BackgroundService
             {
                 _logger.LogDebug("Processing input report: {Hex}", Convert.ToHexString(report));
 
-                var inputEvent = UsbInputEvent.FromReport(report);
-                
+                var inputEvent = UsbInputEventParser.TryParse(report);
+
                 switch (inputEvent)
                 {
                     case ButtonStateChange { State: ButtonState.Down }:
@@ -88,7 +88,7 @@ public sealed class OrchestratorService : BackgroundService
                         await ButtonUp();
                         break;
                     default:
-                        _logger.LogWarning("Received unknown input event {type}", inputEvent.GetType().Name);
+                        _logger.LogWarning("Received unknown input event {type}", inputEvent?.GetType().Name);
                         break;
                 }
 
