@@ -21,7 +21,7 @@ device = find_device(usage_page=0xFF22, usage=0x01)
 
 # ----- BUTTON SETUP -----
 
-button = digitalio.DigitalInOut(board.GP0)
+button = digitalio.DigitalInOut(board.GP9)
 button.switch_to_input(pull=digitalio.Pull.UP)
 
 # ----- STATE TRACKING -----
@@ -31,8 +31,8 @@ last_pressed = False
 # ----- NEOPIXEL SETUP -----
 
 num_pixels = 4
-pixel_pin = board.GP3
-pixels = neopixel.NeoPixel(pixel_pin, 4, brightness=0.2, auto_write=False)
+pixel_pin = board.GP13
+pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.2, auto_write=False)
 
 def show_color(r, g, b, brightness_percent):
     for i in range(num_pixels):
