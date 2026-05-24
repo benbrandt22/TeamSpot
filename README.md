@@ -12,7 +12,7 @@ The other key objective was to get good visual feedback of my microphone's curre
 
 ## Hardware
 
-Find more information in the [Device ReadMe](src/device/README.md)
+Find more information in the [Device ReadMe](src/firmware/README.md)
 
 ## Teams Integration
 
