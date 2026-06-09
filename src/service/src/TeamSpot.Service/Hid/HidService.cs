@@ -126,19 +126,32 @@ public class HidService : BackgroundService
         {
             if (!_connection.IsConnected)
             {
-                _logger.LogWarning("HID Writer: device not connected, dropping report.");
+                // device not connected, dropping report
                 continue;
             }
 
-            bool sent = await _connection.SendAsync(report, ct);
+            try
+            {
+                bool sent = await _connection.SendAsync(report, ct);
 
-            if (sent)
-            {
-                _logger.LogDebug("Sent {N} bytes to device.", report.Length);
+                if (sent)
+                {
+                    _logger.LogDebug("Sent {N} bytes to device.", report.Length);
+                }
+                else
+                {
+                    _logger.LogWarning("HID Writer: send failed (device may have disconnected).");
+                }
             }
-            else
+            catch (TimeoutException tEx)
             {
-                _logger.LogWarning("HID Writer: send failed (device may have disconnected).");
+                // expected failure: sometimes happens at system startup when USB subsystem isn't fully ready and the first write(s) fail.
+                _logger.LogWarning(tEx, "HID Writer: send timed out (device may not be ready yet)");
+            }
+            catch (Exception ex)
+            {
+                // general exception, log it and let the message go
+                _logger.LogWarning(ex, "HID Writer: send failed");
             }
         }
     }
