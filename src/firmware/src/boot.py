@@ -1,4 +1,10 @@
 import usb_hid
+import digitalio
+import storage
+import time
+import pins
+
+# ----- USB INTERFACE -----
 
 HID_REPORT_DESCRIPTOR = bytes((
     0x06, 0x22, 0xFF,    # UsagePage(LitButton[0xFF22])
@@ -40,3 +46,40 @@ my_device = usb_hid.Device(
 )
 
 usb_hid.enable( (my_device,) )
+
+
+# ----- USB STORAGE -----
+
+# USB storage is enabled by default in CircuitPython. For this device we only want to enable it if the user holds the button down for awhile during startup.
+
+button = digitalio.DigitalInOut(pins.BUTTON_PIN)
+button.switch_to_input(pull=digitalio.Pull.UP)
+
+HOLD_DURATION_SECONDS = 10
+
+enableUsbStorage = True
+
+if not button.value: # button is pressed
+    # Button held — waiting to confirm it stays held long enough...
+    start = time.monotonic()
+    held = True
+
+    while time.monotonic() - start < HOLD_DURATION_SECONDS:
+        if button.value:  # released early
+            held = False
+            break
+        time.sleep(0.10)
+
+    if not held:
+        # button released early — disable USB storage
+        enableUsbStorage = False
+else:
+    # button wasn't held at all — disable USB storage immediately
+    enableUsbStorage = False
+
+
+if not enableUsbStorage:
+    storage.disable_usb_drive()
+
+
+button.deinit()  # release the pin before code.py runs

@@ -1,12 +1,9 @@
 import time
-import board
 import digitalio
 import neopixel
 import usb_hid
 import math
-
-# RP2040-Zero board members: (dir(board))
-# ['__class__', '__name__', 'A0', 'A1', 'A2', 'A3', 'GP0', 'GP1', 'GP10', 'GP11', 'GP12', 'GP13', 'GP14', 'GP15', 'GP16', 'GP17', 'GP18', 'GP19', 'GP2', 'GP20', 'GP21', 'GP22', 'GP23', 'GP24', 'GP25', 'GP26', 'GP26_A0', 'GP27', 'GP27_A1', 'GP28', 'GP28_A2', 'GP29', 'GP29_A3', 'GP3', 'GP4', 'GP5', 'GP6', 'GP7', 'GP8', 'GP9', 'NEOPIXEL', 'RX', 'TX', 'UART', '__dict__', 'board_id']
+import pins
 
 # Get our custom HID device
 device = None
@@ -21,7 +18,7 @@ device = find_device(usage_page=0xFF22, usage=0x01)
 
 # ----- BUTTON SETUP -----
 
-button = digitalio.DigitalInOut(board.GP27)
+button = digitalio.DigitalInOut(pins.BUTTON_PIN)
 button.switch_to_input(pull=digitalio.Pull.UP)
 
 # ----- STATE TRACKING -----
@@ -31,7 +28,7 @@ last_pressed = False
 # ----- NEOPIXEL SETUP -----
 
 num_pixels = 6
-pixel_pin = board.GP3
+pixel_pin = pins.PIXEL_PIN
 pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.2, auto_write=False)
 
 def show_color(r, g, b, brightness_percent):
