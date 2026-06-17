@@ -17,7 +17,7 @@ namespace TeamSpot.Service
     public class SecureSettingsService<TSettings>
     {
         private string _settingsDirectory;
-        private string _settingsFilename = "settings.json";
+        private string _settingsFilename = $"{typeof(TSettings).Name}.json";
         private ILogger<SecureSettingsService<TSettings>> _logger;
 
         public SecureSettingsService(ILogger<SecureSettingsService<TSettings>> logger)

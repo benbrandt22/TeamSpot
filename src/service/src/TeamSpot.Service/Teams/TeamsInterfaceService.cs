@@ -9,7 +9,7 @@ namespace TeamSpot.Service.Teams
     public class TeamsInterfaceService : BackgroundService
     {
         private readonly ILogger<TeamsInterfaceService> _logger;
-        private readonly SecureSettingsService<TeamSpotSettings> _settingsService;
+        private readonly SecureSettingsService<TeamsApiSettings> _settingsService;
         private readonly ITeamsStateWriter _stateWriter;
         private readonly ITeamsCommandReader _commandReader;
 
@@ -23,7 +23,7 @@ namespace TeamSpot.Service.Teams
         };
 
         public TeamsInterfaceService(ILogger<TeamsInterfaceService> logger,
-            SecureSettingsService<TeamSpotSettings> settingsService,
+            SecureSettingsService<TeamsApiSettings> settingsService,
             ITeamsStateWriter stateWriter, ITeamsCommandReader commandReader)
         {
             _logger = logger;
