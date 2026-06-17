@@ -1,27 +1,13 @@
-﻿using System.Drawing;
-
-namespace TeamSpot.Service.Device
+﻿namespace TeamSpot.Service.Device
 {
     public class SetLedOutput
     {
-        public SetLedOutput(Color color, byte brightnessPercent = 100) : this(color.R, color.G, color.B, brightnessPercent) { }
+        private readonly ColorAndBrightness _colorAndBrightness;
 
-        public SetLedOutput(byte red, byte green, byte blue, byte brightnessPercent = 100)
+        public SetLedOutput(ColorAndBrightness colorAndBrightness)
         {
-            ArgumentOutOfRangeException.ThrowIfGreaterThan(brightnessPercent, 100, nameof(brightnessPercent));
-
-            bool isBlack = (red == 0 && green == 0 && blue == 0);
-
-            Red = red;
-            Green = green;
-            Blue = blue;
-            BrightnessPercent = (isBlack ? (byte)0 : brightnessPercent);
+            _colorAndBrightness = colorAndBrightness;
         }
-
-        public byte Red { get; }
-        public byte Green { get; }
-        public byte Blue { get; }
-        public byte BrightnessPercent { get; }
 
         /// <summary>
         /// Converts to USB output report format expected by the device.
@@ -31,10 +17,10 @@ namespace TeamSpot.Service.Device
             byte outputReportId = 0x01; // report ID for LED output
             return new byte[] {
                 outputReportId,
-                Red,
-                Green,
-                Blue,
-                BrightnessPercent
+                _colorAndBrightness.Red,
+                _colorAndBrightness.Green,
+                _colorAndBrightness.Blue,
+                _colorAndBrightness.Brightness
             };
         }
     }

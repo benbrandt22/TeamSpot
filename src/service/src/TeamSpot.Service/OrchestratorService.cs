@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using System.Diagnostics;
 using System.Drawing;
 using TeamSpot.Service.Device;
@@ -13,6 +14,7 @@ public sealed class OrchestratorService : BackgroundService
 {
     private readonly HidMessageBus _hidMessageBus;
     private readonly ILogger<OrchestratorService> _logger;
+    private readonly IOptionsMonitor<StatusColorsSettings> _colorSettings;
     private readonly ITeamsStateReader _stateReader;
     private readonly ITeamsCommandWriter _commandWriter;
     private Stopwatch _buttonPressedTimer = new();
@@ -22,10 +24,12 @@ public sealed class OrchestratorService : BackgroundService
 
     public OrchestratorService(HidMessageBus hidMessageBus,
         ILogger<OrchestratorService> logger,
+        IOptionsMonitor<StatusColorsSettings> colorSettings,
         ITeamsStateReader stateReader, ITeamsCommandWriter commandWriter)
     {
         _hidMessageBus = hidMessageBus;
         _logger = logger;
+        _colorSettings = colorSettings;
         _stateReader = stateReader;
         _commandWriter = commandWriter;
         _currentState = TeamsSimplifiedState.Offline;
@@ -159,15 +163,19 @@ public sealed class OrchestratorService : BackgroundService
 
     private async Task DisplayTeamsStateAsync(TeamsSimplifiedState teamsSimplifiedState, CancellationToken ct)
     {
-        SetLedOutput ledState = teamsSimplifiedState switch
+        var colors = _colorSettings.CurrentValue;
+
+        ColorAndBrightness colorAndBrightness = teamsSimplifiedState switch
         {
-            TeamsSimplifiedState.Offline => new(Color.Black),
-            TeamsSimplifiedState.Connecting => new(Color.Blue, 10),
-            TeamsSimplifiedState.Connected => new(Color.Blue, 20),
-            TeamsSimplifiedState.MeetingMutedMic => new(Color.Red),
-            TeamsSimplifiedState.MeetingLiveMic => new(Color.Green),
-            _ => new(Color.Black)
+            TeamsSimplifiedState.Offline => colors.Offline,
+            TeamsSimplifiedState.Connecting => colors.ConnectedToTeams,
+            TeamsSimplifiedState.Connected => colors.ConnectedToTeams,
+            TeamsSimplifiedState.MeetingMutedMic => colors.MeetingMutedMic,
+            TeamsSimplifiedState.MeetingLiveMic => colors.MeetingLiveMic,
+            _ => new ColorAndBrightness(Color.Black, 0)
         };
+
+        var ledState = new SetLedOutput(colorAndBrightness);
 
         await _hidMessageBus.Outbound.Writer.WriteAsync(ledState.ToUsbOutputReport());
     }
