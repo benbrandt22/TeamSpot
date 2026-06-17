@@ -1,6 +1,6 @@
 ﻿namespace TeamSpot.Service
 {
-    public class TeamSpotSettings
+    public class TeamsApiSettings
     {
         public string TeamsApiToken { get; set; } = "";
     }

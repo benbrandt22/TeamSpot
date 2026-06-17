@@ -7,7 +7,7 @@ builder.Services.AddWindowsService(options =>
 });
 
 Logging.Configure(builder);
-Dependencies.Configure(builder.Services);
+Dependencies.Configure(builder);
 
 IHost host = builder.Build();
 host.Run();
