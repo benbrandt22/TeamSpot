@@ -15,6 +15,10 @@ The other key objective was to get good visual feedback of my microphone's curre
 - [Firmware ReadMe](src/firmware/README.md)
 - [Circuit Board ReadMe](src/board/README.md)
 
+# Software
+
+- [Windows Service ReadMe](src/service/README.md)
+
 ## Teams Integration
 
 My initial research revealed a local websocket API that published realtime events from Teams, and had the ability to send commands to Teams. This was originally released (I think) around 2023 and was heavily used by the Elgato Stream Deck to allow similar control and status display integration with Teams.
