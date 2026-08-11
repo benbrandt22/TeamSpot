@@ -35,3 +35,4 @@ Some related links:
 
 When I discovered this, I also found articles/posts that revealed that Microsoft was planning on deprecating and/or removing this API, announced in late 2025. The Teams instance on my personal computer did not have this API enabled. However, my Teams installation on my work laptop did have it enabled. They were both on the same version, so something about my corporate account had this feature enabled. It could still go away someday, but for now it works and that's good enough for my little project.
 
+_UPDATE August 2026 - The third-party API settings are now missing from my Teams installation. It would seem that Microsoft finally actually deprecated the feature. It may be time to explore other ways to get status and control the microphone_
