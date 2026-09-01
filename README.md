@@ -4,6 +4,10 @@ Hardware Mute Control for Microsoft Teams
 
 (Currently a work in progress)
 
+![Assembled](src/images/teamspot_assembled.jpg)
+
+![Base](src/images/teamspot_base.jpg)
+
 ## Why does this exist?
 
 This project was created because it seemed like a fun idea for a small electronics project to try some new things. In my professional life, I use Microsoft Teams for meetings and calls. During most meetings I try to have good microphone etiquette, muting myself when I'm not speaking to minimize background noise and distractions for others. When I wanted to speak, I didn't like having to grab my mouse and find the un-mute button. Sometimes that meant extra seconds of silence before I could respond. Sometimes I'd forget I'm on mute because I had another appication active. Keyboard shortcuts didn't seem like the right solution either, as sometimes I'm using another application that's active in front of MS Teams. I was in the mood to build some hardware, so a physical button seemed like the right way to handle this.

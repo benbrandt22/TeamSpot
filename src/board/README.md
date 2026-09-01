@@ -1,5 +1,9 @@
 # Circuit Board
 
+![Board Top](../images/teamspot_board_top.jpg)
+
+![Board Bottom](../images/teamspot_board_bottom.jpg)
+
 The circuit board was designed with [KiCad](https://www.kicad.org/). I've designed boards in the past with other tools, and this was my first project in KiCad. With a little help from YouTube tutorials, I was able to get up to speed quickly.
 
 The board contains a mix of surface mount and through-hole components. The RGB LEDs, capacitors, and resistor are all surface mount, while the microcontroller and keyboard switch are through-hole.
