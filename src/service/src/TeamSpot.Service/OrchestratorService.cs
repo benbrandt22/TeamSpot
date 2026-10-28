@@ -4,6 +4,7 @@ using System.Drawing;
 using TeamSpot.Service.Device;
 using TeamSpot.Service.Hid;
 using TeamSpot.Service.Teams;
+using TeamSpot.Service.Teams.ObsoleteApi;
 
 namespace TeamSpot.Service;
 
@@ -158,7 +159,7 @@ public sealed class OrchestratorService : BackgroundService
     private async Task ToggleMuteAsync()
     {
         _logger.LogDebug("Toggling Mute");
-        await _commandWriter.CommandWriter.WriteAsync(TeamsCommand.ToggleMute());
+        await _commandWriter.CommandWriter.WriteAsync(TeamsApiCommand.ToggleMute());
     }
 
     private async Task DisplayTeamsStateAsync(TeamsSimplifiedState teamsSimplifiedState, CancellationToken ct)

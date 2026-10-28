@@ -1,7 +1,8 @@
 ﻿using System.Reflection;
 
-namespace TeamSpot.Service.Teams
+namespace TeamSpot.Service.Teams.ObsoleteApi
 {
+    [Obsolete("Teams no longer supports this local API as of August 2026. Keeping this code here for posterity for the time being.")]
     public class TeamsApiConnection
     {
         private Assembly _assembly;

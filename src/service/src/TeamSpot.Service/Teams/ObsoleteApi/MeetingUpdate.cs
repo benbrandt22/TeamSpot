@@ -1,5 +1,6 @@
-﻿namespace TeamSpot.Service.Teams
+﻿namespace TeamSpot.Service.Teams.ObsoleteApi
 {
+    [Obsolete("This class maps to the meeting data published by the Teams local API, which is now obsolete")]
     public class MeetingUpdate
     {
         public MeetingPermissions MeetingPermissions { get; set; } = new();

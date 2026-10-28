@@ -4,11 +4,12 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 
-namespace TeamSpot.Service.Teams
+namespace TeamSpot.Service.Teams.ObsoleteApi
 {
-    public class TeamsInterfaceService : BackgroundService
+    [Obsolete("Teams no longer supports this local API as of August 2026. Keeping this code here for posterity for the time being.", error: true)]
+    public class TeamsWebsocketApiInterfaceService : BackgroundService
     {
-        private readonly ILogger<TeamsInterfaceService> _logger;
+        private readonly ILogger<TeamsWebsocketApiInterfaceService> _logger;
         private readonly SecureSettingsService<TeamsApiSettings> _settingsService;
         private readonly ITeamsStateWriter _stateWriter;
         private readonly ITeamsCommandReader _commandReader;
@@ -22,7 +23,7 @@ namespace TeamSpot.Service.Teams
             PropertyNameCaseInsensitive = true
         };
 
-        public TeamsInterfaceService(ILogger<TeamsInterfaceService> logger,
+        public TeamsWebsocketApiInterfaceService(ILogger<TeamsWebsocketApiInterfaceService> logger,
             SecureSettingsService<TeamsApiSettings> settingsService,
             ITeamsStateWriter stateWriter, ITeamsCommandReader commandReader)
         {
@@ -168,7 +169,7 @@ namespace TeamSpot.Service.Teams
             catch (OperationCanceledException) { /* normal shutdown */ }
         }
 
-        private async Task SendCommandAsync(TeamsCommand command, CancellationToken cancellationToken)
+        private async Task SendCommandAsync(TeamsApiCommand command, CancellationToken cancellationToken)
         {
             var payload = JsonSerializer.Serialize(command);
 
@@ -223,7 +224,7 @@ namespace TeamSpot.Service.Teams
                     {
                         // we're not paired yet, send a command to start the pairing process
                         _logger.LogInformation("Initiating pairing with Teams.");
-                        await SendCommandAsync(TeamsCommand.SendReaction(TeamsCommand.ReactionType.Like), cancellationToken);
+                        await SendCommandAsync(TeamsApiCommand.SendReaction(TeamsApiCommand.ReactionType.Like), cancellationToken);
                     }
                 }
             }
