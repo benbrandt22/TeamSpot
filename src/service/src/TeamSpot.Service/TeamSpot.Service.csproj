@@ -12,6 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Teams\ObsoleteApi\MeetingUpdate.cs" />
+    <Compile Remove="Teams\ObsoleteApi\TeamsApiCommand.cs" />
+    <Compile Remove="Teams\ObsoleteApi\TeamsApiConnection.cs" />
+    <Compile Remove="Teams\ObsoleteApi\TeamsWebsocketApiInterfaceService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="install-service.bat" />
   </ItemGroup>
 
@@ -22,6 +29,13 @@
     <Content Include="install-service.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Teams\ObsoleteApi\MeetingUpdate.cs" />
+    <None Include="Teams\ObsoleteApi\TeamsApiCommand.cs" />
+    <None Include="Teams\ObsoleteApi\TeamsApiConnection.cs" />
+    <None Include="Teams\ObsoleteApi\TeamsWebsocketApiInterfaceService.cs" />
   </ItemGroup>
 
   <ItemGroup>

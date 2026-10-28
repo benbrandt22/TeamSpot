@@ -1,6 +1,5 @@
 ﻿using TeamSpot.Service.Hid;
 using TeamSpot.Service.Teams;
-using TeamSpot.Service.Teams.ObsoleteApi;
 
 namespace TeamSpot.Service.Startup
 {
@@ -25,7 +24,7 @@ namespace TeamSpot.Service.Startup
 
             services.AddHostedService<HidService>();
             services.AddHostedService<OrchestratorService>();
-            services.AddHostedService<TeamsWebsocketApiInterfaceService>();
+            services.AddHostedService<TeamsApplicationUiInterfaceService>();
 
         }
     }
