@@ -11,6 +11,15 @@
         public bool IsMicrophoneLive { get; set; }
 
 
+        public static TeamsState Offline => new TeamsState()
+        {
+            IsTeamsRunning = false,
+            IsConnected = false,
+            IsInMeeting = false,
+            IsMicrophoneLive = false
+        };
+
+
         public TeamsSimplifiedState ToSimplifiedState()
         {
             var simplifiedState = this switch
