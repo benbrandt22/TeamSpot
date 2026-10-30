@@ -1,4 +1,5 @@
 ﻿using TeamSpot.Service.Hid;
+using TeamSpot.Service.Presentation;
 using TeamSpot.Service.Teams;
 
 namespace TeamSpot.Service.Startup
@@ -22,10 +23,15 @@ namespace TeamSpot.Service.Startup
             services.AddSingleton<ITeamsCommandWriter>(sp => sp.GetRequiredService<TeamsMessageBus>());
             services.AddSingleton<ITeamsCommandReader>(sp => sp.GetRequiredService<TeamsMessageBus>());
 
+            services.AddSingleton<TrayMessageBus>();
+            services.AddSingleton<ITrayStateWriter>(sp => sp.GetRequiredService<TrayMessageBus>());
+            services.AddSingleton<ITrayStateReader>(sp => sp.GetRequiredService<TrayMessageBus>());
+
             services.AddHostedService<HidService>();
             services.AddHostedService<OrchestratorService>();
             services.AddHostedService<TeamsApplicationUiInterfaceService>();
 
+            services.AddSingleton<TrayApplicationContext>();
         }
     }
 }

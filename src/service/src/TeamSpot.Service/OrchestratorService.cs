@@ -17,6 +17,7 @@ public sealed class OrchestratorService : BackgroundService
     private readonly IOptionsMonitor<StatusColorsSettings> _colorSettings;
     private readonly ITeamsStateReader _stateReader;
     private readonly ITeamsCommandWriter _commandWriter;
+    private readonly ITrayStateWriter _trayStateWriter;
     private Stopwatch _buttonPressedTimer = new();
     private TimeSpan _longPressThreshold = TimeSpan.FromMilliseconds(1000);
     private TimeSpan _heartbeatInterval = TimeSpan.FromSeconds(3);
@@ -25,13 +26,16 @@ public sealed class OrchestratorService : BackgroundService
     public OrchestratorService(HidMessageBus hidMessageBus,
         ILogger<OrchestratorService> logger,
         IOptionsMonitor<StatusColorsSettings> colorSettings,
-        ITeamsStateReader stateReader, ITeamsCommandWriter commandWriter)
+        ITeamsStateReader stateReader,
+        ITeamsCommandWriter commandWriter,
+        ITrayStateWriter trayStateWriter)
     {
         _hidMessageBus = hidMessageBus;
         _logger = logger;
         _colorSettings = colorSettings;
         _stateReader = stateReader;
         _commandWriter = commandWriter;
+        _trayStateWriter = trayStateWriter;
         _currentState = TeamsSimplifiedState.Offline;
     }
 
@@ -163,8 +167,9 @@ public sealed class OrchestratorService : BackgroundService
 
     private async Task DisplayTeamsStateAsync(TeamsSimplifiedState teamsSimplifiedState, CancellationToken ct)
     {
-        var colors = _colorSettings.CurrentValue;
+        await _trayStateWriter.StateWriter.WriteAsync(teamsSimplifiedState);
 
+        var colors = _colorSettings.CurrentValue;
         ColorAndBrightness colorAndBrightness = teamsSimplifiedState switch
         {
             TeamsSimplifiedState.Offline => colors.Offline,
